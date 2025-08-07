@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Магазин одежды — выбор сезона</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      background: #f9f9f9;
+    }
+
+    .top-header {
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: 20px 15px;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .top-header h1 {
+      margin: 0;
+    }
+
+    header {
+      background: #333;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    header button {
+      background: #555;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    header button:hover, header button.active {
+      background: #ff6600;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .product {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .product img {
+      width: 120px;
+      height: auto;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    .product-details {
+      flex: 1;
+    }
+
+    .product h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .no-products {
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <h1>Магазин одежды</h1>
+  </div>
+
+  <header>
+    <button data-season="Все" class="active">Все сезоны</button>
+    <button data-season="Школа">Школа</button>
+    <button data-season="Лето">Лето</button>
+    <button data-season="Зима">Зима</button>
+    <button data-season="Весна">Весна</button>
+    <button data-season="Осень">Осень</button>
+  </header>
+
+  <main>
+    <div id="product-list"></div>
+  </main>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: "Красная футболка",
+        type: "Футболка",
+        size: "M",
+        color: "Красный",
+        season: "Лето",
+        price: 1200,
+    
+
+      },
+      {
+        id: 2,
+        name: "Синие джинсы",
+        type: "Джинсы",
+        size: "L",
+        color: "Синий",
+        season: "Осень",
+        price: 2500,
+        image: "https://via.placeholder.com/120x120?text=Джинсы"
+      },
+      {
+        id: 3,
+        name: "Черная куртка",
+        type: "Куртка",
+        size: "M",
+        color: "Черный",
+        season: "Зима",
+        price: 5000,
+        image: "https://via.placeholder.com/120x120?text=Куртка"
+      },
+      {
+        id: 4,
+        name: "Синяя футболка",
+        type: "Футболка",
+        size: "S",
+        color: "Синий",
+        season: "Лето",
+        price: 1100,
+        image: "https://via.placeholder.com/120x120?text=Футболка"
+      },
+      {
+        id: 5,
+        name: "Красные джинсы",
+        type: "Джинсы",
+        size: "M",
+        color: "Красный",
+        season: "Весна",
+        price: 2700,
+        image: "https://via.placeholder.com/120x120?text=Джинсы"
+      },
+      {
+        id: 6,
+        name: "Школьная форма",
+        type: "Куртка",
+        size: "L",
+        color: "Черный",
+        season: "Школа",
+        price: 4000,
+        image: "https://via.placeholder.com/120x120?text=Форма"
+      }
+    ];
+
+    const productList = document.getElementById('product-list');
+    const buttons = document.querySelectorAll('header button');
+
+    function displayProducts(filtered) {
+      productList.innerHTML = '';
+
+      if(filtered.length === 0) {
+        productList.innerHTML = '<p class="no-products">Товары для этого сезона не найдены</p>';
+        return;
+      }
+
+      filtered.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <div class="product-details">
+            <h3>${product.name}</h3>
+            <p>Тип: ${product.type}</p>
+            <p>Размер: ${product.size}</p>
+            <p>Цвет: ${product.color}</p>
+            <p>Сезон: ${product.season}</p>
+            <p>Цена: ${product.price} ₽</p>
+          </div>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    function filterBySeason(season) {
+      if(season === 'Все') {
+        displayProducts(products);
+      } else {
+        const filtered = products.filter(p => p.season === season);
+        displayProducts(filtered);
+      }
+    }
+
+    const savedSeason = localStorage.getItem('selectedSeason') || 'Все';
+
+    function setActiveButton(season) {
+      buttons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-season') === season);
+      });
+    }
+
+    setActiveButton(savedSeason);
+    filterBySeason(savedSeason);
+
+    buttons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const season = button.getAttribute('data-season');
+        setActiveButton(season);
+        filterBySeason(season);
+        localStorage.setItem('selectedSeason', season);
+      });
+    });
+  </script>
+
+</body>
+</html>
